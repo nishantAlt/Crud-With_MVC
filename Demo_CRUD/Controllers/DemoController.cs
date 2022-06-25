@@ -13,6 +13,7 @@ namespace Demo_CRUD.Controllers
 
         //[FromBody]Bean data
         Dbclass obj = new Dbclass();
+
         [HttpPost]
         public string Post([FromBody]Bean data)
         {

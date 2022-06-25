@@ -7,7 +7,7 @@ namespace Demo_CRUD.Controllers
 {
     public class Dbclass
     {
-        SqlConnection cnn;
+        SqlConnection cnn=null;
         SqlCommand command;
         string query,Output="";
         SqlDataReader dataReader;
@@ -22,6 +22,41 @@ namespace Demo_CRUD.Controllers
             return i;
         }
 
+        public int insertCustom(Bean data)
+        {
+            connect();
+            string param = null;
+            string value = null;
+                var last = data.GetType().GetProperties().Last();
+                foreach (var prop in data.GetType().GetProperties())
+                {
+                    if(prop.Equals(last))
+                    {
+                        param = param + prop.Name;
+                        value = value + "'" + prop.GetValue(data, null) + "'";
+                    }
+                    else
+                    {
+                        param = param + prop.Name + ",";
+                        value = value + "'" + prop.GetValue(data, null) + "',";
+                    }
+                }
+            query = $"insert into demo({param}) values({value})";
+            SqlCommand cmd = new SqlCommand(query, cnn);
+            int i=0;
+            try
+            {
+                 i= cmd.ExecuteNonQuery();
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine("Exception: "+e);
+            }
+            disconnect();
+            return i;
+
+        } 
+
         public List<Bean> selectAll()
         {
             connect();
@@ -29,7 +64,6 @@ namespace Demo_CRUD.Controllers
             query = "select * from demo";
             command = new SqlCommand(query, cnn);
             dataReader = command.ExecuteReader();
-            Bean obj2 = new Bean();
             while(dataReader.Read())
             {
                 arr.Add(new Bean(dataReader.GetValue(0).ToString().Trim(), dataReader.GetValue(1).ToString().Trim()));
@@ -54,7 +88,10 @@ namespace Demo_CRUD.Controllers
 
         public void disconnect()
         {
-            cnn.Close();
+            if(cnn!=null)
+            {
+                cnn.Close();
+            }
         }
 
     }
