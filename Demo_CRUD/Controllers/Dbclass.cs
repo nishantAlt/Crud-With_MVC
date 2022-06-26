@@ -58,6 +58,21 @@ namespace Demo_CRUD.Controllers
             disconnect();
             return arr;
         }
+
+        public Bean selectById(String id)
+        {
+            connect();
+            query = $"select * from demo where id='{id}'";
+            command = new SqlCommand(query, cnn);
+            dataReader = command.ExecuteReader();
+            Bean result = null;
+            while (dataReader.Read())
+            {
+                result = new Bean(dataReader.GetValue(0).ToString().Trim(), dataReader.GetValue(1).ToString().Trim());
+            }
+            disconnect();
+            return result;
+        }
         public int insertCustom(Bean data)
         {
             connect();

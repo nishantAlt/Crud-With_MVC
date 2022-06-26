@@ -34,6 +34,11 @@ namespace Demo_CRUD.Controllers
             return obj.selectAll();
         }
 
-        
+        [HttpGet]
+        public Bean Get(String id)
+        {
+            return obj.selectById(id);
+        }
+
     }
 }
