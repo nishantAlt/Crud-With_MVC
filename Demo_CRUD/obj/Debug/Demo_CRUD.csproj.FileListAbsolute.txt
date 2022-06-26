@@ -174,3 +174,4 @@ F:\Demo_CRUD\Demo_CRUD\obj\Debug\Demo_CRUD.csproj.CoreCompileInputs.cache
 F:\Demo_CRUD\Demo_CRUD\obj\Debug\Demo_CRUD.csproj.CopyComplete
 F:\Demo_CRUD\Demo_CRUD\obj\Debug\Demo_CRUD.dll
 F:\Demo_CRUD\Demo_CRUD\obj\Debug\Demo_CRUD.pdb
+F:\Demo_CRUD\Demo_CRUD\obj\Debug\Demo_CRUD.csproj.AssemblyReference.cache

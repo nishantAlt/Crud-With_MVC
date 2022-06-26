@@ -9,9 +9,31 @@ namespace Demo_CRUD.Controllers
     {
         SqlConnection cnn=null;
         SqlCommand command;
-        string query,Output="";
+        string query;
         SqlDataReader dataReader;
         string connectionString = "Data Source=DESKTOP-D84M7A1\\SQLEXPRESS;Initial Catalog=Practise;Integrated Security=True";
+
+        public void connect()
+        {
+            cnn = new SqlConnection(connectionString);
+            try
+            {
+                cnn.Open();
+                Console.WriteLine("Connected");
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error: " + e);
+            }
+        }
+
+        public void disconnect()
+        {
+            if (cnn != null)
+            {
+                cnn.Close();
+            }
+        }
         public int insert(Bean obj)
         {
             connect();
@@ -22,6 +44,20 @@ namespace Demo_CRUD.Controllers
             return i;
         }
 
+        public List<Bean> selectAll()
+        {
+            connect();
+            List<Bean> arr = new List<Bean>();
+            query = "select * from demo";
+            command = new SqlCommand(query, cnn);
+            dataReader = command.ExecuteReader();
+            while (dataReader.Read())
+            {
+                arr.Add(new Bean(dataReader.GetValue(0).ToString().Trim(), dataReader.GetValue(1).ToString().Trim()));
+            }
+            disconnect();
+            return arr;
+        }
         public int insertCustom(Bean data)
         {
             connect();
@@ -55,44 +91,52 @@ namespace Demo_CRUD.Controllers
             disconnect();
             return i;
 
-        } 
+        }
 
-        public List<Bean> selectAll()
+        public int insertCustomAll(List<Bean> arr)
         {
             connect();
-            List<Bean> arr = new List<Bean>();
-            query = "select * from demo";
-            command = new SqlCommand(query, cnn);
-            dataReader = command.ExecuteReader();
-            while(dataReader.Read())
+            string param = null;
+            string value = null;
+            int i = 0;
+            foreach (Bean data in arr)
             {
-                arr.Add(new Bean(dataReader.GetValue(0).ToString().Trim(), dataReader.GetValue(1).ToString().Trim()));
+                var last = data.GetType().GetProperties().Last();
+                foreach (var prop in data.GetType().GetProperties())
+                {
+                    if (prop.Equals(last))
+                    {
+                        param = param + prop.Name;
+                        value = value + "'" + prop.GetValue(data, null) + "'";
+                    }
+                    else
+                    {
+                        param = param + prop.Name + ",";
+                        value = value + "'" + prop.GetValue(data, null) + "',";
+                    }
+
+                }
+                query = $"insert into demo({param}) values({value})";
+                SqlCommand cmd = new SqlCommand(query, cnn);
+
+                try
+                {
+                    i = i + cmd.ExecuteNonQuery();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Exception: " + e);
+                }
+                param = "";
+                value = "";
             }
+
             disconnect();
-            return arr;
+            return i;
         }
+        
 
-        public void connect()
-        {
-            cnn = new SqlConnection(connectionString);
-            try
-            {
-                cnn.Open();
-                Console.WriteLine("Connected");
-            }
-            catch(Exception e)
-            {
-                Console.WriteLine("Error: "+e);
-            }
-        }
-
-        public void disconnect()
-        {
-            if(cnn!=null)
-            {
-                cnn.Close();
-            }
-        }
+        
 
     }
 }
